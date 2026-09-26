@@ -49,7 +49,7 @@
     .wordmark {
       color: var(--green);
       font-family: Georgia, serif;
-      font-size: 30px;
+      font-size: 18px;
       font-weight: 700;
       text-decoration: none;
     }
@@ -304,11 +304,23 @@
       font-weight: 700;
     }
 
+    .flight-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 16px 0;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #e8efdf;
+      touch-action: manipulation;
+    }
+
     :focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 
     @media (max-width: 700px) {
       .site-shell { width: min(100% - 36px, 520px); }
       .site-header { min-height: 68px; }
+      .wordmark { font-size: 16px; }
       nav { gap: 16px; }
       nav a { font-size: 12px; }
       .hero { min-height: auto; padding: 48px 0; }
@@ -317,8 +329,15 @@
       .about { grid-template-columns: 1fr; gap: 30px; padding: 42px 0; }
     }
 
+    @media (max-width: 460px) {
+      .site-header { flex-wrap: wrap; gap: 4px; padding: 12px 0; }
+      .wordmark { flex-basis: 100%; }
+    }
+
     @media (max-width: 390px) {
       .site-shell { width: calc(100% - 28px); }
+      .site-header { flex-wrap: wrap; gap: 4px; padding: 12px 0; }
+      .wordmark { flex-basis: 100%; }
       nav { gap: 11px; }
       nav a { font-size: 11px; }
       h1 { font-size: 48px; }
@@ -334,7 +353,7 @@
 <body>
   <div class="site-shell">
     <header class="site-header">
-      <a class="wordmark" href="#top" aria-label="Mayank, home">m.</a>
+      <a class="wordmark" href="#top">WELCOME TO MY WEB APP</a>
       <nav aria-label="Main navigation">
         <a href="#about">About</a>
         <a href="#arcade">Arcade</a>
@@ -427,6 +446,13 @@
       <button class="start-button" id="word-next" type="button" hidden>Next word</button>
       <p class="game-status" id="word-status" aria-live="polite">Ready when you are.</p>
     </section>
+
+    <section class="game-panel" id="flight-game" hidden>
+      <div class="game-meta"><span>Gates: <span id="flight-score">0</span></span><span>Best: <span id="flight-best">0</span></span></div>
+      <canvas class="flight-canvas" id="flight-canvas" width="360" height="250" tabindex="0" aria-label="Sky Hopper play area. Tap, click, or press Space to flap over the gates."></canvas>
+      <button class="start-button" id="flight-start" type="button">Start flying</button>
+      <p class="game-status" id="flight-status" aria-live="polite">Tap or press Space to fly between the gates.</p>
+    </section>
   </dialog>
 
   <script>
@@ -440,6 +466,7 @@
     const signalGame = document.querySelector("#signal-game");
     const memoryGame = document.querySelector("#memory-game");
     const wordGame = document.querySelector("#word-game");
+    const flightGame = document.querySelector("#flight-game");
     const signalBoard = document.querySelector("#game-board");
     const memoryBoard = document.querySelector("#memory-board");
     const scoreDisplay = document.querySelector("#score");
@@ -458,12 +485,19 @@
     const wordScoreDisplay = document.querySelector("#word-score");
     const scrambledWord = document.querySelector("#scrambled-word");
     const wordClue = document.querySelector("#word-clue");
+    const flightCanvas = document.querySelector("#flight-canvas");
+    const flightContext = flightCanvas.getContext("2d");
+    const flightScoreDisplay = document.querySelector("#flight-score");
+    const flightBestDisplay = document.querySelector("#flight-best");
+    const flightStart = document.querySelector("#flight-start");
+    const flightStatus = document.querySelector("#flight-status");
     const signalCells = [];
     const memoryCells = [];
     const gameCatalog = {
       pixel: { code: "PIXEL", title: "Signal Sprint", description: "Catch the glowing signal as many times as you can.", panel: signalGame },
       memory: { code: "MEMORY", title: "Pattern Memory", description: "Watch each pattern, then repeat it in the same order.", panel: memoryGame },
-      word: { code: "WORD", title: "Word Scramble", description: "Unscramble five words from their clues.", panel: wordGame }
+      word: { code: "WORD", title: "Word Scramble", description: "Unscramble five words from their clues.", panel: wordGame },
+      flap: { code: "FLAP", title: "Sky Hopper", description: "Flap through the gates and see how far you can fly.", panel: flightGame }
     };
     const wordPuzzles = [
       { answer: "browser", scramble: "rowbres", clue: "You use this to explore websites." },
@@ -485,6 +519,17 @@
     let memoryTimeouts = [];
     let wordIndex = 0;
     let wordScore = 0;
+    let flightRunning = false;
+    let flightFrame = 0;
+    let flightAnimation = 0;
+    let flightScore = 0;
+    let flightBest = 0;
+    let birdY = 125;
+    let birdVelocity = 0;
+    let gates = [];
+    const flightWidth = flightCanvas.width;
+    const flightHeight = flightCanvas.height;
+    const groundY = flightHeight - 20;
 
     function makeBoard(board, cells, prefix, onSelect) {
       for (let index = 0; index < 9; index += 1) {
@@ -536,6 +581,132 @@
       activeCell = nextCell;
       signalCells[activeCell].classList.add("active");
     }
+
+    function drawFlight() {
+      flightContext.fillStyle = "#e8efdf";
+      flightContext.fillRect(0, 0, flightWidth, flightHeight);
+      flightContext.fillStyle = "#d5ed72";
+      flightContext.beginPath();
+      flightContext.arc(303, 43, 18, 0, Math.PI * 2);
+      flightContext.fill();
+
+      gates.forEach((gate) => {
+        const gapTop = gate.center - gate.gap / 2;
+        const gapBottom = gate.center + gate.gap / 2;
+        flightContext.fillStyle = "#315c43";
+        flightContext.fillRect(gate.x, 0, gate.width, gapTop);
+        flightContext.fillRect(gate.x, gapBottom, gate.width, groundY - gapBottom);
+        flightContext.fillStyle = "#d5ed72";
+        flightContext.fillRect(gate.x - 3, gapTop - 5, gate.width + 6, 5);
+        flightContext.fillRect(gate.x - 3, gapBottom, gate.width + 6, 5);
+      });
+
+      flightContext.fillStyle = "#315c43";
+      flightContext.fillRect(0, groundY, flightWidth, flightHeight - groundY);
+      flightContext.fillStyle = "#df7054";
+      flightContext.beginPath();
+      flightContext.arc(72, birdY, 11, 0, Math.PI * 2);
+      flightContext.fill();
+      flightContext.fillStyle = "#20251f";
+      flightContext.beginPath();
+      flightContext.arc(76, birdY - 3, 2, 0, Math.PI * 2);
+      flightContext.fill();
+      flightContext.fillStyle = "#d5ed72";
+      flightContext.beginPath();
+      flightContext.moveTo(81, birdY);
+      flightContext.lineTo(91, birdY + 3);
+      flightContext.lineTo(81, birdY + 6);
+      flightContext.closePath();
+      flightContext.fill();
+
+      if (!flightRunning && flightScore === 0) {
+        flightContext.fillStyle = "#20251f";
+        flightContext.font = "bold 14px monospace";
+        flightContext.textAlign = "center";
+        flightContext.fillText("SKY HOPPER", flightWidth / 2, 116);
+        flightContext.font = "12px monospace";
+        flightContext.fillText("TAP OR PRESS SPACE", flightWidth / 2, 139);
+      }
+    }
+
+    function endFlight() {
+      if (!flightRunning) return;
+      flightRunning = false;
+      cancelAnimationFrame(flightAnimation);
+      flightBest = Math.max(flightBest, flightScore);
+      flightBestDisplay.textContent = flightBest;
+      flightStart.textContent = "Fly again";
+      flightStatus.textContent = `Flight over! You cleared ${flightScore} gate${flightScore === 1 ? "" : "s"}.`;
+      drawFlight();
+    }
+
+    function updateFlight() {
+      if (!flightRunning) return;
+      flightFrame += 1;
+      birdVelocity += 0.34;
+      birdY += birdVelocity;
+      if (flightFrame % 88 === 0) {
+        gates.push({
+          x: flightWidth,
+          width: 42,
+          center: 76 + Math.random() * 100,
+          gap: 100,
+          passed: false
+        });
+      }
+
+      gates.forEach((gate) => {
+        if (!flightRunning) return;
+        gate.x -= 2.4;
+        const gapTop = gate.center - gate.gap / 2;
+        const gapBottom = gate.center + gate.gap / 2;
+        if (83 > gate.x && 61 < gate.x + gate.width && (birdY - 9 < gapTop || birdY + 9 > gapBottom)) {
+          endFlight();
+          return;
+        }
+        if (!gate.passed && gate.x + gate.width < 61) {
+          gate.passed = true;
+          flightScore += 1;
+          flightScoreDisplay.textContent = flightScore;
+        }
+      });
+      gates = gates.filter((gate) => gate.x + gate.width > 0);
+
+      if (flightRunning && (birdY < 9 || birdY > groundY - 9)) endFlight();
+      drawFlight();
+      if (flightRunning) flightAnimation = requestAnimationFrame(updateFlight);
+    }
+
+    function startFlight() {
+      cancelAnimationFrame(flightAnimation);
+      flightRunning = true;
+      flightFrame = 0;
+      flightScore = 0;
+      birdY = 125;
+      birdVelocity = -3.5;
+      gates = [];
+      flightScoreDisplay.textContent = "0";
+      flightStart.textContent = "Restart";
+      flightStatus.textContent = "Tap, click, or press Space to flap.";
+      drawFlight();
+      flightAnimation = requestAnimationFrame(updateFlight);
+    }
+
+    function flapFlight() {
+      if (!flightRunning) startFlight();
+      birdVelocity = -5.4;
+    }
+
+    flightStart.addEventListener("click", startFlight);
+    flightCanvas.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      flapFlight();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (!gameDialog.open || activeGame !== "flap" || event.repeat || ![" ", "ArrowUp"].includes(event.key)) return;
+      event.preventDefault();
+      flapFlight();
+    });
 
     startButton.addEventListener("click", () => {
       clearInterval(gameTimer);
@@ -617,6 +788,8 @@
     function resetSelectedGame() {
       clearInterval(gameTimer);
       clearMemoryTimeouts();
+      cancelAnimationFrame(flightAnimation);
+      flightRunning = false;
       activeCell = -1;
       signalCells.forEach((cell) => {
         cell.classList.remove("active");
@@ -645,6 +818,16 @@
       wordScore = 0;
       wordScoreDisplay.textContent = "0";
       renderWordPuzzle();
+      flightFrame = 0;
+      flightScore = 0;
+      birdY = 125;
+      birdVelocity = 0;
+      gates = [];
+      flightScoreDisplay.textContent = "0";
+      flightBestDisplay.textContent = flightBest;
+      flightStart.textContent = "Start flying";
+      flightStatus.textContent = "Tap or press Space to fly between the gates.";
+      drawFlight();
     }
 
     codeForm.addEventListener("submit", (event) => {
@@ -659,7 +842,7 @@
       gameCode.textContent = `Unlocked: ${game.code}`;
       gameTitle.textContent = game.title;
       gameDescription.textContent = game.description;
-      [signalGame, memoryGame, wordGame].forEach((panel) => { panel.hidden = panel !== game.panel; });
+      [signalGame, memoryGame, wordGame, flightGame].forEach((panel) => { panel.hidden = panel !== game.panel; });
       resetSelectedGame();
       searchMessage.textContent = `${game.title} unlocked.`;
       gameDialog.showModal();
@@ -709,6 +892,8 @@
     function closeGame() {
       clearInterval(gameTimer);
       clearMemoryTimeouts();
+      cancelAnimationFrame(flightAnimation);
+      flightRunning = false;
       memoryInputEnabled = false;
       gameDialog.close();
       startButton.disabled = false;
