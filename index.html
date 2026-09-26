@@ -1,87 +1,507 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Personal Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <title>Mayank | Personal Website</title>
   <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f1e9;
+      --ink: #20251f;
+      --muted: #636a60;
+      --green: #315c43;
+      --lime: #d5ed72;
+      --line: #d8d7ca;
+      --coral: #df7054;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      background-color: #f4f6f8;
-      font-family: Arial, sans-serif;
-      color: #333333;
-      margin: 40px auto;
-      max-width: 650px;
+      margin: 0;
+      background-color: var(--paper);
+      background-image: radial-gradient(#d7d5c9 0.7px, transparent 0.7px);
+      background-size: 18px 18px;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
       line-height: 1.6;
-      padding: 0 15px;
     }
 
-    h1 {
-      color: #2b4c7e;
-      text-align: center;
+    a { color: inherit; }
+
+    .site-shell {
+      width: min(1060px, calc(100% - 48px));
+      margin: 0 auto;
     }
 
-    /* 3 separate card sections */
-    .section-box {
-      background-color: #ffffff;
-      border: 1px solid #dcdcdc;
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
+    .site-header {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
     }
 
-    h2 {
-      color: #2b4c7e;
-      margin-top: 0;
-      border-bottom: 1px solid #eeeeee;
-      padding-bottom: 6px;
-    }
-
-    ul {
-      padding-left: 20px;
-    }
-
-    li {
-      margin-bottom: 6px;
-    }
-
-    a {
-      color: #1a73e8;
+    .wordmark {
+      color: var(--green);
+      font-family: Georgia, serif;
+      font-size: 30px;
+      font-weight: 700;
       text-decoration: none;
     }
 
-    a:hover {
-      text-decoration: underline;
+    nav { display: flex; gap: 30px; }
+
+    nav a {
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    nav a:hover, nav a:focus-visible { color: var(--green); }
+
+    .hero {
+      min-height: 490px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 56px;
+      padding: 56px 0 62px;
+    }
+
+    .eyebrow, .section-kicker {
+      margin: 0 0 16px;
+      color: var(--green);
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+      max-width: 520px;
+      margin-bottom: 20px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 500;
+      line-height: 0.99;
+    }
+
+    h1 span { color: var(--green); font-style: italic; }
+
+    .hero-copy {
+      max-width: 440px;
+      margin-bottom: 26px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .text-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .hero-photo {
+      position: relative;
+      min-height: 350px;
+      overflow: hidden;
+      background: #b8c7a9;
+      border-radius: 3px 70px 3px 3px;
+    }
+
+    .hero-photo img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      inset: 0;
+      object-fit: cover;
+    }
+
+    .photo-note {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      padding: 8px 12px;
+      background: var(--lime);
+      color: var(--ink);
+      font-family: monospace;
+      font-size: 12px;
+      transform: rotate(-2deg);
+    }
+
+    .arcade {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      align-items: center;
+      gap: 40px;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .arcade h2, .about h2 {
+      margin-bottom: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 1.15;
+    }
+
+    .arcade-copy { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+
+    .search-form {
+      display: flex;
+      min-height: 58px;
+      padding: 5px;
+      background: #fffefa;
+      border: 1px solid #c9cbbd;
+      border-radius: 5px;
+      box-shadow: 4px 4px 0 #dfe2cf;
+    }
+
+    .search-form input {
+      width: 100%;
+      min-width: 0;
+      padding: 0 14px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .search-form:focus-within { outline: 2px solid var(--green); outline-offset: 3px; }
+
+    .search-form button, .start-button {
+      border: 0;
+      border-radius: 3px;
+      background: var(--green);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0 20px;
+    }
+
+    .search-form button:hover, .start-button:hover { background: #244631; }
+
+    .search-message {
+      min-height: 24px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      padding: 58px 0 64px;
+    }
+
+    .about p { color: var(--muted); }
+
+    .interest-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .interest-list li {
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 0 30px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer a { color: var(--green); text-decoration: none; }
+
+    dialog {
+      width: min(430px, calc(100% - 32px));
+      padding: 26px;
+      border: 1px solid #c9cbbd;
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 18px 70px #20251f55;
+    }
+
+    dialog::backdrop { background: #171d18b3; }
+
+    .dialog-top { display: flex; justify-content: space-between; align-items: start; }
+
+    .dialog-top h2 {
+      margin-bottom: 6px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      font-weight: 500;
+    }
+
+    .close-button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .game-meta { display: flex; justify-content: space-between; color: var(--muted); font-family: monospace; }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .game-cell {
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #e9e7dc;
+      cursor: pointer;
+    }
+
+    .game-cell.active { background: var(--coral); border-color: var(--coral); }
+    .game-cell:disabled { cursor: default; }
+    .start-button { min-height: 44px; padding: 0 18px; }
+    .game-status { min-height: 24px; margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+
+    :focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+
+    @media (max-width: 700px) {
+      .site-shell { width: min(100% - 36px, 520px); }
+      .site-header { min-height: 68px; }
+      nav { gap: 16px; }
+      nav a { font-size: 12px; }
+      .hero { min-height: auto; grid-template-columns: 1fr; gap: 30px; padding: 48px 0; }
+      h1 { font-size: 56px; }
+      .hero-photo { min-height: 280px; }
+      .arcade { grid-template-columns: 1fr; gap: 20px; padding: 30px 0; }
+      .about { grid-template-columns: 1fr; gap: 30px; padding: 42px 0; }
+    }
+
+    @media (max-width: 390px) {
+      .site-shell { width: calc(100% - 28px); }
+      nav { gap: 11px; }
+      nav a { font-size: 11px; }
+      h1 { font-size: 48px; }
+      .search-form button { padding: 0 13px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
   </style>
 </head>
 <body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="Mayank, home">m.</a>
+      <nav aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#arcade">Arcade</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-  <h1>Mayank</h1>
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">Hello, I'm Mayank</p>
+          <h1 id="hero-title">Curious by nature. <span>Building</span> on the web.</h1>
+          <p class="hero-copy">I’m learning to make the internet a little more interesting, one project at a time.</p>
+          <a class="text-link" href="https://github.com/Mayank0" target="_blank" rel="noreferrer">Find me on GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-photo">
+          <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1100&q=85" alt="A team working together around a computer">
+          <span class="photo-note">ideas in progress / 01</span>
+        </div>
+      </section>
 
-  <!-- Section 1: About Me -->
-  <div class="section-box">
-    <h2>About Me</h2>
-    <p>Hey! I am Mayank. I am currently learning web development and building projects on Hack Club. I like computers, gaming, and exploring how things work.</p>
+      <section class="arcade" id="arcade" aria-labelledby="arcade-title">
+        <div>
+          <p class="section-kicker">A little side quest</p>
+          <h2 id="arcade-title">After-hours arcade</h2>
+          <p class="arcade-copy">There’s a game hiding in the search.</p>
+        </div>
+        <div>
+          <form class="search-form" id="code-form">
+            <input id="code-input" type="search" placeholder="Search..." aria-label="Search or enter a game code" autocomplete="off" spellcheck="false">
+            <button type="submit">Enter</button>
+          </form>
+          <p class="search-message" id="search-message" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="about" id="about" aria-labelledby="about-title">
+        <div>
+          <p class="section-kicker">A bit about me</p>
+          <h2 id="about-title">Always poking at how things work.</h2>
+          <p>I’m currently learning web development and building projects with Hack Club. When I’m away from the keyboard, I’m probably gaming or finding something new to explore.</p>
+        </div>
+        <div>
+          <p class="section-kicker">On my learning list</p>
+          <ul class="interest-list">
+            <li>HTML &amp; CSS</li>
+            <li>Small websites</li>
+            <li>Git &amp; GitHub</li>
+            <li>Game ideas</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact">
+      <span>Made while learning, by Mayank.</span>
+      <a href="https://github.com/Mayank0" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <span>Hack Club: @Mayank</span>
+    </footer>
   </div>
 
-  <!-- Section 2: Projects & Interests -->
-  <div class="section-box">
-    <h2>Things I'm Learning</h2>
-    <ul>
-      <li>HTML & CSS basics</li>
-      <li>Building small websites</li>
-      <li>Working with Git and GitHub</li>
-    </ul>
-  </div>
+  <dialog id="game-dialog" aria-labelledby="game-title">
+    <div class="dialog-top">
+      <div>
+        <p class="section-kicker">Unlocked: PIXEL</p>
+        <h2 id="game-title">Signal Sprint</h2>
+      </div>
+      <button class="close-button" id="close-game" type="button" aria-label="Close game">&times;</button>
+    </div>
+    <p class="arcade-copy">Catch the glowing signal as many times as you can.</p>
+    <div class="game-meta"><span>Score: <span id="score">0</span></span><span>Time: <span id="time">15</span>s</span></div>
+    <div class="game-board" id="game-board" aria-label="Signal Sprint game board"></div>
+    <button class="start-button" id="start-game" type="button">Start game</button>
+    <p class="game-status" id="game-status" aria-live="polite">Ready when you are.</p>
+  </dialog>
 
-  <!-- Section 3: Contact & Links -->
-  <div class="section-box">
-    <h2>Contact & Links</h2>
-    <p>Feel free to check out my profile or connect:</p>
-    <ul>
-      <li>GitHub: <a href="https://github.com/Mayank0" target="_blank">github.com/Mayank0</a></li>
-      <li>Hack Club: @Mayank</li>
-    </ul>
-  </div>
+  <script>
+    const codeForm = document.querySelector("#code-form");
+    const codeInput = document.querySelector("#code-input");
+    const searchMessage = document.querySelector("#search-message");
+    const gameDialog = document.querySelector("#game-dialog");
+    const gameBoard = document.querySelector("#game-board");
+    const scoreDisplay = document.querySelector("#score");
+    const timeDisplay = document.querySelector("#time");
+    const gameStatus = document.querySelector("#game-status");
+    const startButton = document.querySelector("#start-game");
+    const cells = [];
+    let score = 0;
+    let timeLeft = 15;
+    let activeCell = -1;
+    let gameTimer;
 
+    for (let index = 0; index < 9; index += 1) {
+      const cell = document.createElement("button");
+      cell.className = "game-cell";
+      cell.type = "button";
+      cell.disabled = true;
+      cell.setAttribute("aria-label", `Grid square ${index + 1}`);
+      cell.addEventListener("click", () => {
+        if (index !== activeCell || timeLeft <= 0) return;
+        score += 1;
+        scoreDisplay.textContent = score;
+        showSignal();
+      });
+      cells.push(cell);
+      gameBoard.append(cell);
+    }
+
+    function showSignal() {
+      cells.forEach((cell) => cell.classList.remove("active"));
+      let nextCell = Math.floor(Math.random() * cells.length);
+      if (cells.length > 1 && nextCell === activeCell) nextCell = (nextCell + 1) % cells.length;
+      activeCell = nextCell;
+      cells[activeCell].classList.add("active");
+    }
+
+    codeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (codeInput.value.trim().toLowerCase() === "pixel") {
+        searchMessage.textContent = "Signal found. The arcade is open.";
+        gameDialog.showModal();
+        codeInput.value = "";
+      } else {
+        searchMessage.textContent = codeInput.value.trim() ? "No signal found. Try another search." : "Enter a search to continue.";
+      }
+    });
+
+    startButton.addEventListener("click", () => {
+      clearInterval(gameTimer);
+      score = 0;
+      timeLeft = 15;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = timeLeft;
+      gameStatus.textContent = "Go! Find the glowing square.";
+      startButton.disabled = true;
+      cells.forEach((cell) => { cell.disabled = false; });
+      showSignal();
+      gameTimer = setInterval(() => {
+        timeLeft -= 1;
+        timeDisplay.textContent = timeLeft;
+        if (timeLeft === 0) {
+          clearInterval(gameTimer);
+          activeCell = -1;
+          cells.forEach((cell) => {
+            cell.classList.remove("active");
+            cell.disabled = true;
+          });
+          gameStatus.textContent = `Time! You caught ${score} signal${score === 1 ? "" : "s"}.`;
+          startButton.disabled = false;
+          startButton.textContent = "Play again";
+        }
+      }, 1000);
+    });
+
+    function closeGame() {
+      clearInterval(gameTimer);
+      gameDialog.close();
+      startButton.disabled = false;
+      cells.forEach((cell) => {
+        cell.classList.remove("active");
+        cell.disabled = true;
+      });
+      activeCell = -1;
+    }
+
+    document.querySelector("#close-game").addEventListener("click", closeGame);
+    gameDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeGame();
+    });
+    gameDialog.addEventListener("click", (event) => {
+      if (event.target === gameDialog) closeGame();
+    });
+  </script>
 </body>
 </html>
