@@ -65,11 +65,9 @@
     nav a:hover, nav a:focus-visible { color: var(--green); }
 
     .hero {
-      min-height: 490px;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      min-height: 420px;
+      display: flex;
       align-items: center;
-      gap: 56px;
       padding: 56px 0 62px;
     }
 
@@ -111,34 +109,6 @@
       font-weight: 700;
       text-decoration-thickness: 1px;
       text-underline-offset: 4px;
-    }
-
-    .hero-photo {
-      position: relative;
-      min-height: 350px;
-      overflow: hidden;
-      background: #b8c7a9;
-      border-radius: 3px 70px 3px 3px;
-    }
-
-    .hero-photo img {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      inset: 0;
-      object-fit: cover;
-    }
-
-    .photo-note {
-      position: absolute;
-      right: 16px;
-      bottom: 16px;
-      padding: 8px 12px;
-      background: var(--lime);
-      color: var(--ink);
-      font-family: monospace;
-      font-size: 12px;
-      transform: rotate(-2deg);
     }
 
     .arcade {
@@ -296,6 +266,43 @@
     .game-cell:disabled { cursor: default; }
     .start-button { min-height: 44px; padding: 0 18px; }
     .game-status { min-height: 24px; margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+    [hidden] { display: none !important; }
+
+    .word-puzzle {
+      margin: 20px 0 12px;
+      color: var(--green);
+      font-family: monospace;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-align: center;
+    }
+
+    .word-clue { min-height: 24px; color: var(--muted); text-align: center; }
+
+    .word-form { display: flex; min-height: 46px; gap: 8px; }
+
+    .word-form input {
+      width: 100%;
+      min-width: 0;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #fffefa;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .word-form button {
+      padding: 0 16px;
+      border: 0;
+      border-radius: 3px;
+      background: var(--green);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
 
     :focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 
@@ -304,9 +311,8 @@
       .site-header { min-height: 68px; }
       nav { gap: 16px; }
       nav a { font-size: 12px; }
-      .hero { min-height: auto; grid-template-columns: 1fr; gap: 30px; padding: 48px 0; }
+      .hero { min-height: auto; padding: 48px 0; }
       h1 { font-size: 56px; }
-      .hero-photo { min-height: 280px; }
       .arcade { grid-template-columns: 1fr; gap: 20px; padding: 30px 0; }
       .about { grid-template-columns: 1fr; gap: 30px; padding: 42px 0; }
     }
@@ -342,11 +348,7 @@
           <p class="eyebrow">Hello, I'm Mayank</p>
           <h1 id="hero-title">Curious by nature. <span>Building</span> on the web.</h1>
           <p class="hero-copy">I’m learning to make the internet a little more interesting, one project at a time.</p>
-          <a class="text-link" href="https://github.com/Mayank0" target="_blank" rel="noreferrer">Find me on GitHub <span aria-hidden="true">↗</span></a>
-        </div>
-        <div class="hero-photo">
-          <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1100&q=85" alt="A team working together around a computer">
-          <span class="photo-note">ideas in progress / 01</span>
+          <a class="text-link" href="https://github.com/kaushikmayank12p-source" target="_blank" rel="noreferrer">Find me on GitHub <span aria-hidden="true">↗</span></a>
         </div>
       </section>
 
@@ -354,7 +356,7 @@
         <div>
           <p class="section-kicker">A little side quest</p>
           <h2 id="arcade-title">After-hours arcade</h2>
-          <p class="arcade-copy">There’s a game hiding in the search.</p>
+          <p class="arcade-copy">There are games hiding in the search.</p>
         </div>
         <div>
           <form class="search-form" id="code-form">
@@ -385,7 +387,7 @@
 
     <footer id="contact">
       <span>Made while learning, by Mayank.</span>
-      <a href="https://github.com/Mayank0" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://github.com/kaushikmayank12p-source" target="_blank" rel="noreferrer">GitHub ↗</a>
       <span>Hack Club: @mayank095</span>
     </footer>
   </div>
@@ -393,16 +395,38 @@
   <dialog id="game-dialog" aria-labelledby="game-title">
     <div class="dialog-top">
       <div>
-        <p class="section-kicker">Unlocked: PIXEL</p>
+        <p class="section-kicker" id="game-code">Unlocked: PIXEL</p>
         <h2 id="game-title">Signal Sprint</h2>
       </div>
       <button class="close-button" id="close-game" type="button" aria-label="Close game">&times;</button>
     </div>
-    <p class="arcade-copy">Catch the glowing signal as many times as you can.</p>
-    <div class="game-meta"><span>Score: <span id="score">0</span></span><span>Time: <span id="time">15</span>s</span></div>
-    <div class="game-board" id="game-board" aria-label="Signal Sprint game board"></div>
-    <button class="start-button" id="start-game" type="button">Start game</button>
-    <p class="game-status" id="game-status" aria-live="polite">Ready when you are.</p>
+    <p class="arcade-copy" id="game-description">Catch the glowing signal as many times as you can.</p>
+
+    <section class="game-panel" id="signal-game">
+      <div class="game-meta"><span>Score: <span id="score">0</span></span><span>Time: <span id="time">15</span>s</span></div>
+      <div class="game-board" id="game-board" aria-label="Signal Sprint game board"></div>
+      <button class="start-button" id="start-game" type="button">Start game</button>
+      <p class="game-status" id="game-status" aria-live="polite">Ready when you are.</p>
+    </section>
+
+    <section class="game-panel" id="memory-game" hidden>
+      <div class="game-meta"><span>Round: <span id="memory-round">1 / 5</span></span><span>Patterns: <span id="memory-score">0</span></span></div>
+      <div class="game-board" id="memory-board" aria-label="Pattern memory game board"></div>
+      <button class="start-button" id="memory-start" type="button">Start pattern</button>
+      <p class="game-status" id="memory-status" aria-live="polite">Ready when you are.</p>
+    </section>
+
+    <section class="game-panel" id="word-game" hidden>
+      <div class="game-meta"><span>Word: <span id="word-round">1 / 5</span></span><span>Solved: <span id="word-score">0</span></span></div>
+      <p class="word-puzzle" id="scrambled-word"></p>
+      <p class="word-clue" id="word-clue"></p>
+      <form class="word-form" id="word-form">
+        <input id="word-input" type="text" placeholder="Unscramble..." aria-label="Unscrambled word" autocomplete="off" required>
+        <button type="submit">Check</button>
+      </form>
+      <button class="start-button" id="word-next" type="button" hidden>Next word</button>
+      <p class="game-status" id="word-status" aria-live="polite">Ready when you are.</p>
+    </section>
   </dialog>
 
   <script>
@@ -410,51 +434,108 @@
     const codeInput = document.querySelector("#code-input");
     const searchMessage = document.querySelector("#search-message");
     const gameDialog = document.querySelector("#game-dialog");
-    const gameBoard = document.querySelector("#game-board");
+    const gameTitle = document.querySelector("#game-title");
+    const gameCode = document.querySelector("#game-code");
+    const gameDescription = document.querySelector("#game-description");
+    const signalGame = document.querySelector("#signal-game");
+    const memoryGame = document.querySelector("#memory-game");
+    const wordGame = document.querySelector("#word-game");
+    const signalBoard = document.querySelector("#game-board");
+    const memoryBoard = document.querySelector("#memory-board");
     const scoreDisplay = document.querySelector("#score");
     const timeDisplay = document.querySelector("#time");
     const gameStatus = document.querySelector("#game-status");
     const startButton = document.querySelector("#start-game");
-    const cells = [];
+    const memoryStart = document.querySelector("#memory-start");
+    const memoryStatus = document.querySelector("#memory-status");
+    const memoryRoundDisplay = document.querySelector("#memory-round");
+    const memoryScoreDisplay = document.querySelector("#memory-score");
+    const wordForm = document.querySelector("#word-form");
+    const wordInput = document.querySelector("#word-input");
+    const wordNext = document.querySelector("#word-next");
+    const wordStatus = document.querySelector("#word-status");
+    const wordRoundDisplay = document.querySelector("#word-round");
+    const wordScoreDisplay = document.querySelector("#word-score");
+    const scrambledWord = document.querySelector("#scrambled-word");
+    const wordClue = document.querySelector("#word-clue");
+    const signalCells = [];
+    const memoryCells = [];
+    const gameCatalog = {
+      pixel: { code: "PIXEL", title: "Signal Sprint", description: "Catch the glowing signal as many times as you can.", panel: signalGame },
+      memory: { code: "MEMORY", title: "Pattern Memory", description: "Watch each pattern, then repeat it in the same order.", panel: memoryGame },
+      word: { code: "WORD", title: "Word Scramble", description: "Unscramble five words from their clues.", panel: wordGame }
+    };
+    const wordPuzzles = [
+      { answer: "browser", scramble: "rowbres", clue: "You use this to explore websites." },
+      { answer: "button", scramble: "nutbot", clue: "A thing you click to make something happen." },
+      { answer: "pixel", scramble: "xiple", clue: "A tiny dot on a screen." },
+      { answer: "script", scramble: "tpcris", clue: "A set of instructions a computer can run." },
+      { answer: "website", scramble: "btiesew", clue: "A collection of pages on the internet." }
+    ];
+    let activeGame = "";
     let score = 0;
     let timeLeft = 15;
     let activeCell = -1;
     let gameTimer;
+    let memoryRound = 1;
+    let memoryScore = 0;
+    let memorySequence = [];
+    let memoryPosition = 0;
+    let memoryInputEnabled = false;
+    let memoryTimeouts = [];
+    let wordIndex = 0;
+    let wordScore = 0;
 
-    for (let index = 0; index < 9; index += 1) {
-      const cell = document.createElement("button");
-      cell.className = "game-cell";
-      cell.type = "button";
-      cell.disabled = true;
-      cell.setAttribute("aria-label", `Grid square ${index + 1}`);
-      cell.addEventListener("click", () => {
-        if (index !== activeCell || timeLeft <= 0) return;
-        score += 1;
-        scoreDisplay.textContent = score;
-        showSignal();
-      });
-      cells.push(cell);
-      gameBoard.append(cell);
+    function makeBoard(board, cells, prefix, onSelect) {
+      for (let index = 0; index < 9; index += 1) {
+        const cell = document.createElement("button");
+        cell.className = "game-cell";
+        cell.type = "button";
+        cell.disabled = true;
+        cell.setAttribute("aria-label", `${prefix} square ${index + 1}`);
+        cell.addEventListener("click", () => onSelect(index));
+        cells.push(cell);
+        board.append(cell);
+      }
     }
 
-    function showSignal() {
-      cells.forEach((cell) => cell.classList.remove("active"));
-      let nextCell = Math.floor(Math.random() * cells.length);
-      if (cells.length > 1 && nextCell === activeCell) nextCell = (nextCell + 1) % cells.length;
-      activeCell = nextCell;
-      cells[activeCell].classList.add("active");
-    }
+    makeBoard(signalBoard, signalCells, "Signal Sprint", (index) => {
+      if (index !== activeCell || timeLeft <= 0) return;
+      score += 1;
+      scoreDisplay.textContent = score;
+      showSignal();
+    });
 
-    codeForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      if (codeInput.value.trim().toLowerCase() === "pixel") {
-        searchMessage.textContent = "Signal found. The arcade is open.";
-        gameDialog.showModal();
-        codeInput.value = "";
-      } else {
-        searchMessage.textContent = codeInput.value.trim() ? "No signal found. Try another search." : "Enter a search to continue.";
+    makeBoard(memoryBoard, memoryCells, "Pattern Memory", (index) => {
+      if (!memoryInputEnabled) return;
+      if (index !== memorySequence[memoryPosition]) {
+        finishMemory(false);
+        return;
+      }
+      memoryPosition += 1;
+      if (memoryPosition === memorySequence.length) {
+        memoryInputEnabled = false;
+        memoryScore += 1;
+        memoryScoreDisplay.textContent = memoryScore;
+        memoryCells.forEach((cell) => { cell.disabled = true; });
+        if (memoryRound === 5) {
+          finishMemory(true);
+        } else {
+          memoryRound += 1;
+          memoryRoundDisplay.textContent = `${memoryRound} / 5`;
+          memoryStatus.textContent = "Nice! Get ready for the next pattern.";
+          memoryTimeouts.push(setTimeout(showMemoryPattern, 700));
+        }
       }
     });
+
+    function showSignal() {
+      signalCells.forEach((cell) => cell.classList.remove("active"));
+      let nextCell = Math.floor(Math.random() * signalCells.length);
+      if (signalCells.length > 1 && nextCell === activeCell) nextCell = (nextCell + 1) % signalCells.length;
+      activeCell = nextCell;
+      signalCells[activeCell].classList.add("active");
+    }
 
     startButton.addEventListener("click", () => {
       clearInterval(gameTimer);
@@ -464,7 +545,7 @@
       timeDisplay.textContent = timeLeft;
       gameStatus.textContent = "Go! Find the glowing square.";
       startButton.disabled = true;
-      cells.forEach((cell) => { cell.disabled = false; });
+      signalCells.forEach((cell) => { cell.disabled = false; });
       showSignal();
       gameTimer = setInterval(() => {
         timeLeft -= 1;
@@ -472,7 +553,7 @@
         if (timeLeft === 0) {
           clearInterval(gameTimer);
           activeCell = -1;
-          cells.forEach((cell) => {
+          signalCells.forEach((cell) => {
             cell.classList.remove("active");
             cell.disabled = true;
           });
@@ -483,11 +564,159 @@
       }, 1000);
     });
 
+    function clearMemoryTimeouts() {
+      memoryTimeouts.forEach(clearTimeout);
+      memoryTimeouts = [];
+    }
+
+    function showMemoryPattern() {
+      clearMemoryTimeouts();
+      memoryInputEnabled = false;
+      memorySequence = Array.from({ length: memoryRound + 1 }, () => Math.floor(Math.random() * memoryCells.length));
+      memoryPosition = 0;
+      memoryStatus.textContent = "Watch the pattern.";
+      memoryCells.forEach((cell) => {
+        cell.disabled = true;
+        cell.classList.remove("active");
+      });
+      memorySequence.forEach((cellIndex, sequenceIndex) => {
+        memoryTimeouts.push(setTimeout(() => memoryCells[cellIndex].classList.add("active"), sequenceIndex * 700));
+        memoryTimeouts.push(setTimeout(() => memoryCells[cellIndex].classList.remove("active"), sequenceIndex * 700 + 350));
+      });
+      memoryTimeouts.push(setTimeout(() => {
+        memoryInputEnabled = true;
+        memoryCells.forEach((cell) => { cell.disabled = false; });
+        memoryStatus.textContent = "Your turn. Repeat the pattern.";
+      }, memorySequence.length * 700));
+    }
+
+    function finishMemory(won) {
+      clearMemoryTimeouts();
+      memoryInputEnabled = false;
+      memoryCells.forEach((cell) => {
+        cell.classList.remove("active");
+        cell.disabled = true;
+      });
+      memoryStatus.textContent = won ? "Perfect memory! You cleared all five rounds." : `Pattern missed. You cleared ${memoryScore} round${memoryScore === 1 ? "" : "s"}.`;
+      memoryStart.disabled = false;
+      memoryStart.textContent = "Play again";
+    }
+
+    function renderWordPuzzle() {
+      const puzzle = wordPuzzles[wordIndex];
+      wordRoundDisplay.textContent = `${wordIndex + 1} / ${wordPuzzles.length}`;
+      scrambledWord.textContent = puzzle.scramble.toUpperCase();
+      wordClue.textContent = puzzle.clue;
+      wordInput.value = "";
+      wordInput.disabled = false;
+      wordForm.querySelector("button").disabled = false;
+      wordNext.hidden = true;
+      wordStatus.textContent = "Unscramble the letters.";
+    }
+
+    function resetSelectedGame() {
+      clearInterval(gameTimer);
+      clearMemoryTimeouts();
+      activeCell = -1;
+      signalCells.forEach((cell) => {
+        cell.classList.remove("active");
+        cell.disabled = true;
+      });
+      score = 0;
+      timeLeft = 15;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = timeLeft;
+      startButton.disabled = false;
+      startButton.textContent = "Start game";
+      gameStatus.textContent = "Ready when you are.";
+      memoryInputEnabled = false;
+      memoryRound = 1;
+      memoryScore = 0;
+      memoryRoundDisplay.textContent = "1 / 5";
+      memoryScoreDisplay.textContent = "0";
+      memoryStart.disabled = false;
+      memoryStart.textContent = "Start pattern";
+      memoryStatus.textContent = "Ready when you are.";
+      memoryCells.forEach((cell) => {
+        cell.classList.remove("active");
+        cell.disabled = true;
+      });
+      wordIndex = 0;
+      wordScore = 0;
+      wordScoreDisplay.textContent = "0";
+      renderWordPuzzle();
+    }
+
+    codeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const gameKey = codeInput.value.trim().toLowerCase();
+      const game = gameCatalog[gameKey];
+      if (!game) {
+        searchMessage.textContent = codeInput.value.trim() ? "No signal found. Try another search." : "Enter a search to continue.";
+        return;
+      }
+      activeGame = gameKey;
+      gameCode.textContent = `Unlocked: ${game.code}`;
+      gameTitle.textContent = game.title;
+      gameDescription.textContent = game.description;
+      [signalGame, memoryGame, wordGame].forEach((panel) => { panel.hidden = panel !== game.panel; });
+      resetSelectedGame();
+      searchMessage.textContent = `${game.title} unlocked.`;
+      gameDialog.showModal();
+      codeInput.value = "";
+    });
+
+    memoryStart.addEventListener("click", () => {
+      memoryRound = 1;
+      memoryScore = 0;
+      memoryRoundDisplay.textContent = "1 / 5";
+      memoryScoreDisplay.textContent = "0";
+      memoryStart.disabled = true;
+      showMemoryPattern();
+    });
+
+    wordForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (wordInput.value.trim().toLowerCase() !== wordPuzzles[wordIndex].answer) {
+        wordStatus.textContent = "Not quite. Try another arrangement.";
+        return;
+      }
+      wordScore += 1;
+      wordScoreDisplay.textContent = wordScore;
+      wordInput.disabled = true;
+      wordForm.querySelector("button").disabled = true;
+      wordNext.hidden = false;
+      if (wordIndex === wordPuzzles.length - 1) {
+        wordStatus.textContent = "All five solved. Excellent word work!";
+        wordNext.textContent = "Play again";
+      } else {
+        wordStatus.textContent = "Correct! Ready for the next one?";
+        wordNext.textContent = "Next word";
+      }
+    });
+
+    wordNext.addEventListener("click", () => {
+      if (wordIndex === wordPuzzles.length - 1) {
+        wordIndex = 0;
+        wordScore = 0;
+        wordScoreDisplay.textContent = "0";
+      } else {
+        wordIndex += 1;
+      }
+      renderWordPuzzle();
+    });
+
     function closeGame() {
       clearInterval(gameTimer);
+      clearMemoryTimeouts();
+      memoryInputEnabled = false;
       gameDialog.close();
       startButton.disabled = false;
-      cells.forEach((cell) => {
+      signalCells.forEach((cell) => {
+        cell.classList.remove("active");
+        cell.disabled = true;
+      });
+      memoryCells.forEach((cell) => {
         cell.classList.remove("active");
         cell.disabled = true;
       });
